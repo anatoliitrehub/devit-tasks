@@ -1,0 +1,143 @@
+/* ************** vars ******************* */
+:root {
+  --gapValue: 5px;
+}
+/* ************** common styles ******************* */
+
+.flex_body,
+.grid_body {
+  width: 70%;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+}
+
+.border {
+  border: 3px solid #1a1a1a;
+  border-radius: 5px;
+}
+
+.upperCase {
+  text-transform: uppercase;
+}
+
+.contentCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ************** flex styles ******************* */
+
+.flex_body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gapValue);
+  justify-content: center;
+  align-items: stretch;
+}
+
+.flex_header {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.flex_nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex_nav,
+.flex_footer {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.flex_main--wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: var(--gapValue);
+  justify-content: center;
+
+  align-items: stretch;
+}
+
+.flex_main {
+  width: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 60px;
+  padding-bottom: 60px;
+}
+
+.flex_aside {
+  width: 30%;
+}
+
+/* ************** grid styles ******************* */
+.grid_body {
+  display: grid;
+  grid-template-areas:
+    "h h h"
+    "n n n"
+    "c c s"
+    "f f f";
+  column-gap: var(--gapValue);
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: var(--gapValue);
+  grid-template-rows: 1fr 1fr 4fr 1fr;
+}
+
+.grid_header {
+  grid-area: h;
+}
+.grid_nav {
+  grid-area: n;
+  display: flex;
+  flex-direction: column;
+}
+.grid_main {
+  grid-area: c;
+}
+.grid_aside {
+  grid-area: s;
+}
+.grid_footer {
+  grid-area: f;
+}
+/* ************** square styles ******************* */
+.square_wrapper {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.square_box {
+  width: 200px;
+  height: 200px;
+  border: 1px solid #000000;
+  background-color: red;
+
+  animation-name: rotation;
+  animation-duration: 3s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  33% {
+    background-color: orange;
+    transform: rotate(120deg);
+  }
+  66% {
+    background-color: green;
+    transform: rotate(240deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
