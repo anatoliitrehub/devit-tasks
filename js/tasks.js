@@ -17,11 +17,12 @@ console.log(deepEqual({ name: "test" }, { name: "test", age: 10 })); // false
 //********** resolve:
 
 function deepEqual(...objs) {
+  // отримуємо всі аргументи за допомогою rest оператора
   const res = () => {
-    // ф-ція результат для перебору обї'ктів
+    // ф-ція результат для перебору об'єктів
     return (
       Object.keys({ ...objs[0], ...objs[1] })
-        // виконуємо rest оператор для відбору масиву всіх унікальних ключів отриманих об'єктів
+        // виконуємо spread оператор для відбору всіх унікальних ключів отриманих об'єктів
         .every((k) => {
           if (typeof objs[0][k] === "object" || typeof objs[1][k] === "object")
             return deepEqual(objs[0][k], objs[1][k]);
@@ -57,7 +58,8 @@ function* chunkArray(arr, p) {
 //3. Напишите функцию обертку, которая на вход принимает массив функций и их параметров, а возвращает массив результатов их выполнения. Количество аргументов исполняемой функции не ограничено!
 
 //Пример:
-// console.log("******** task 3:");
+console.log("******** task 3:");
+console.log("IN PROGRESS");
 
 const f1 = (cb) => {
   cb(1);
@@ -69,14 +71,26 @@ const f3 = (a, b, cb) => {
   setTimeout(() => cb([a, b]), 1000);
 };
 
-bulkRun([[f1, []], [f2, [2]], [(f3, [3, 4])]]).then(console.log);
+bulkRun([
+  [f1, []],
+  [f2, [2]],
+  [f3, [3, 4]],
+]).then(console.log);
 // Output: [1, 2, [3, 4]]
 
 //********** resolve:
 
 async function bulkRun(arg) {
-  const funcs = { ...arg };
-  const res = await arg.map((f) => f[0](f[1]));
+  // const funcs = [...arg];
+  // console.log(funcs);
+  console.log(
+    arg.map((f) => {
+      return [...f];
+    })
+  );
+
+  // const res = await arg.map((f) => f[0].apply(...f[1]));
+  const res = await arg.map((f) => f[0]);
   console.log("******** task 3:");
   return res;
   console.log(funcs);
@@ -147,17 +161,12 @@ console.log("******** task 5:");
 
 function objectToArray(arr) {
   const res = []; // загальний масив-результат
-  const temp = []; // тимчасовий масив дитина
   for (const i in arr) {
     // перебираємо об'єкт-аргумент по ключам
-    temp[0] = i;
-    temp[1] = arr[i];
-    if (typeof arr[i] === "object")
-      res.push([
-        i,
-        [...objectToArray(arr[i])],
-      ]); // якщо друге значення об'єкт, то робимо рекурсію
-    else res.push([...temp]); // чи додаємо масив до загального масиву
+
+    if (typeof arr[i] === "object") res.push([i, [...objectToArray(arr[i])]]);
+    // якщо друге значення об'єкт, то робимо рекурсію
+    else res.push([...[i, arr[i]]]); // чи додаємо новий масив до загального масиву
   }
   return res;
 }
@@ -228,8 +237,8 @@ const obj = {
   },
 };
 
-let demoData = 0; //temporary
-mapObject(demoData);
+console.log(mapObject(obj));
+// mapObject(demoData);
 // Outputs: {
 //   'a/b/c': 12,
 //   'a/b/d': 'Hello World',
@@ -238,13 +247,36 @@ mapObject(demoData);
 
 //********** resolve:
 function mapObject(arr) {
-  return arr;
+  const res = []; // оголошуємо масив-результат
+  objObserv(arr); // перший запуск ф-ції для оплацювання кожного об'єкту
+  function objObserv(arrItem, endPath = []) {
+    // ф-ція для оплацювання кожного об'єкту, аргум об'єкт та шлях
+    for (const key in arrItem) {
+      // проходимо по ключах поточного об'єкту
+      if (Object.prototype.toString.call(arrItem[key]) !== "[object Object]") {
+        // перевірка чи є ключі зі значенням без вкладень
+        endPath.push(key); // додаємо черговий ключ до шляху
+        res[endPath.join("/")] = arrItem[key]; // створюємо елемент об'єкту-результату та об'єднуємо шлях
+        endPath.pop(); // видаляємо кінцеве значення шляху
+      }
+    }
+    for (const key in arrItem) {
+      // знов проходимося по ключах поточного об'єкту, шукаємо вкладення
+      if (Object.prototype.toString.call(arrItem[key]) === "[object Object]") {
+        endPath.push(key); // додаємо поточний ключ до шляху
+        objObserv(arrItem[key], endPath); // якщо знайдено вкладений об'єкт, запускаємо рекурсію та передаємо об'єкт та шлях
+        endPath.pop(); // видаляємо кінцеве значення шляху після виконання ф-ції
+      }
+    }
+  }
+  return res; // повертаємо об'єкт-результат
 }
 
 //8. Напишите функцию combos, которая принимает положительное целое число num и возвращает массив массивов положительных целых чисел, где сумма каждого массива равна  num.  Массивы не должны повторяться.
 
 //Пример:
 console.log("******** task 8:");
+console.log("IN PROGRESS");
 
 combos(3);
 // Output:
