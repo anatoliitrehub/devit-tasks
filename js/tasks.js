@@ -58,8 +58,6 @@ function* chunkArray(arr, p) {
 //3. Напишите функцию обертку, которая на вход принимает массив функций и их параметров, а возвращает массив результатов их выполнения. Количество аргументов исполняемой функции не ограничено!
 
 //Пример:
-console.log("******** task 3:");
-console.log("IN PROGRESS");
 
 const f1 = (cb) => {
   cb(1);
@@ -80,25 +78,16 @@ bulkRun([
 
 //********** resolve:
 
-async function bulkRun(arg) {
-  // const funcs = [...arg];
-  // console.log(funcs);
-  console.log(
-    arg.map((f) => {
-      return [...f];
-    })
-  );
-
-  // const res = await arg.map((f) => f[0].apply(...f[1]));
-  const res = await arg.map((f) => f[0]);
+async function bulkRun(arrData) {
+  // ф-ція буде асинхронна згідно синтаксису завдання, приймає масив
+  const res = []; // оголошуємо масив-результат
+  function cb(data) {
+    // ф-ція-вкладення
+    res.push(data); // додаємо аргементи ф-ції, що буде результатом виконання
+  }
+  await arrData.forEach((f) => f[0](...f[1], cb)); // виконуємо кожну ф-цію із аргументами та вкладенням
   console.log("******** task 3:");
-  return res;
-  console.log(funcs);
-  console.log(funcs[1][0].apply(funcs[1][1]));
-  console.log(funcs.map((f) => f[0].apply(...f[1])));
-
-  //   console.log(new Promise(arg[0][0]));
-  return arg;
+  return res; // повертаємо результат виконання
 }
 
 //4. Напишите метод arrayToObject, который превращает массив в объект (использовать рекурсию). Пример:
@@ -276,7 +265,6 @@ function mapObject(arr) {
 
 //Пример:
 console.log("******** task 8:");
-console.log("IN PROGRESS");
 
 combos(3);
 // Output:
@@ -336,14 +324,37 @@ combos(10);
 //********** resolve:
 
 function combos(num) {
-  if (typeof num !== "number") return;
-  const res = [];
-  for (let i = 0; i <= num; i++) {
-    res.push(num);
-  }
+  if (typeof num !== "number") return; // перевірка на тип число вхідного аргументу
+  const tempArr = []; // тимчасовий масив для кожного вкладеного масиву
+  const res = []; // ініціалізуємо масив результат
+  for (let i = 0; i < num; ++i) tempArr.push(1); // перший масив всі 1
 
-  console.log(res);
-  return res;
+  while (tempArr[0] != num) {
+    // виконуємо код поки не залишиться тільки 1 елемент
+    let min = tempArr[0]; // задаємо початкове мін значення
+    let minInd = 0; // задаємо індекс першого елементу, який поки мінімальний
+    let sum = tempArr[0]; // початкова сума тільки перший елемент
+    let tempSum = tempArr[0];
+    res.push([...tempArr]); // додаємо черговий масив у масив-результат
+    for (let j = 1; j < tempArr.length - 1; ++j) {
+      tempSum += tempArr[j]; // до тимчасової суми додаємо наступний елемент
+      if (min > tempArr[j]) {
+        // рахуємо мінімальний поточний елемент
+        min = tempArr[j];
+        minInd = j;
+        sum = tempSum;
+      }
+    }
+    tempArr[minInd] += 1; // додаємо до поточного елементу 1
+    sum += 1;
+    tempArr.splice(minInd + 1); // видаляємо зайву частину масиву після поточного
+
+    for (let k = 0; k < num - sum; ++k) tempArr.push(1); // заповнюємо 1 масив після поточного значення
+  }
+  res.push([...[num]]); // додаємо останній елемент - перший елемент що залишився
+
+  console.log(res); // виводимо для контролю
+  return res; // повертаємо масив-результат
 }
 
 //9.  Напишите функцию add, которая бы работала следующим образом add(1)(2)(7)...(n). Количество последовательных визовов неограничено.
